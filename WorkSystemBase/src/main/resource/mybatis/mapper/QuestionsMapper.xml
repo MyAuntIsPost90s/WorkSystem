@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="worksystem.base.dao.QuestionsMapper" >
+  <resultMap type="worksystem.base.model.dto.QuestionsDto" id="QuestionsDtoMap" autoMapping="true">
+  	<id property="questionid" column="questionid" />
+  	<association property="students" javaType="worksystem.base.model.Students" autoMapping="true"></association>
+  	<association property="teachers" javaType="worksystem.base.model.Teachers" autoMapping="true"></association>
+  </resultMap>
+  <select id="getList" resultMap="QuestionsDtoMap" parameterType="worksystem.base.model.Questions" >
+    SELECT q.*
+	,s.StudentName ,s.StudentAge
+	,t.TeacherName ,t.TeacherAge
+	FROM questions q
+	LEFT JOIN students s ON q.StudentID = s.StudentID
+	LEFT JOIN teachers t ON q.TeacherID = t.TeacherID
+    where 1=1
+    <if test="questionid != null" >
+      and QuestionID = #{questionid}
+    </if>
+    <if test="questiondesc != null" >
+      and QuestionDesc = #{questiondesc}
+    </if>
+    <if test="studentid != null" >
+      and q.StudentID = #{studentid}
+    </if>
+    <if test="teacherid != null" >
+      and q.TeacherID = #{teacherid}
+    </if>
+    <if test="questionanswer != null" >
+      and QuestionAnswer = #{questionanswer}
+    </if>
+    <if test="questiontime != null" >
+      and QuestionTime = #{questiontime}
+    </if>
+    <if test="answertime != null" >
+      and AnswerTime = #{answertime}
+    </if>
+  </select>
+  
+  <select id="getSingle" resultMap="QuestionsDtoMap" >
+    SELECT q.*
+	,s.StudentName ,s.StudentAge
+	,t.TeacherName ,t.TeacherAge
+	FROM questions q
+	LEFT JOIN students s ON q.StudentID = s.StudentID
+	LEFT JOIN teachers t ON q.TeacherID = t.TeacherID
+    where QuestionID = #{id}
+    limit 0,1
+  </select>
+  
+  <insert id="insert" parameterType="worksystem.base.model.Questions" >
+    insert into questions
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="questionid != null" >
+        QuestionID,
+      </if>
+      <if test="questiondesc != null" >
+        QuestionDesc,
+      </if>
+      <if test="studentid != null" >
+        StudentID,
+      </if>
+      <if test="teacherid != null" >
+        TeacherID,
+      </if>
+      <if test="questionanswer != null" >
+        QuestionAnswer,
+      </if>
+      <if test="questiontime != null" >
+        QuestionTime,
+      </if>
+      <if test="answertime != null" >
+        AnswerTime
+      </if>
+    </trim>
+    <trim prefix="values(" suffix=")" suffixOverrides="," >
+      <if test="questionid != null" >
+        #{questionid},
+      </if>
+      <if test="questiondesc != null" >
+        #{questiondesc},
+      </if>
+      <if test="studentid != null" >
+        #{studentid},
+      </if>
+      <if test="teacherid != null" >
+        #{teacherid},
+      </if>
+      <if test="questionanswer != null" >
+        #{questionanswer},
+      </if>
+      <if test="questiontime != null" >
+        #{questiontime},
+      </if>
+      <if test="answertime != null" >
+        #{answertime}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="worksystem.base.model.Questions" >
+    update questions
+    <set >
+      <if test="questiondesc != null" >
+        QuestionDesc = #{questiondesc},
+      </if>
+      <if test="studentid != null" >
+        StudentID = #{studentid},
+      </if>
+      <if test="teacherid != null" >
+        TeacherID = #{teacherid},
+      </if>
+      <if test="questionanswer != null" >
+        QuestionAnswer = #{questionanswer},
+      </if>
+      <if test="questiontime != null" >
+        QuestionTime = #{questiontime},
+      </if>
+      <if test="answertime != null" >
+        AnswerTime = #{answertime}
+      </if>
+    </set>
+    where
+    QuestionID = #{questionid}
+  </update>
+  
+  <delete id="batchDelete" >
+    delete from questions
+    where QuestionID in(
+    <foreach item="item" collection="list" separator="," >
+      #{item}
+    </foreach>
+    )
+  </delete>
+  
+  <select id="getListWithPage" resultMap="QuestionsDtoMap" parameterType="worksystem.base.model.Questions" >
+    SELECT q.*
+	,s.StudentName ,s.StudentAge
+	,t.TeacherName ,t.TeacherAge
+	FROM questions q
+	LEFT JOIN students s ON q.StudentID = s.StudentID
+	LEFT JOIN teachers t ON q.TeacherID = t.TeacherID
+    where 1=1
+    <if test="questionid != null" >
+      and QuestionID = #{questionid}
+    </if>
+    <if test="questiondesc != null" >
+      and QuestionDesc = #{questiondesc}
+    </if>
+    <if test="studentid != null" >
+      and q.StudentID = #{studentid}
+    </if>
+    <if test="teacherid != null" >
+      and q.TeacherID = #{teacherid}
+    </if>
+    <if test="questionanswer != null" >
+      and QuestionAnswer = #{questionanswer}
+    </if>
+    <if test="questiontime != null" >
+      and QuestionTime = #{questiontime}
+    </if>
+    <if test="answertime != null" >
+      and AnswerTime = #{answertime}
+    </if>
+  </select>
+  
+  <select id="getListWithType" resultMap="QuestionsDtoMap">
+    SELECT q.*
+	,s.StudentName ,s.StudentAge
+	,t.TeacherName ,t.TeacherAge
+	FROM questions q
+	LEFT JOIN students s ON q.StudentID = s.StudentID
+	LEFT JOIN teachers t ON q.TeacherID = t.TeacherID
+    where 1=1
+    <if test="questions.questionid != null" >
+      and QuestionID = #{questions.questionid}
+    </if>
+    <if test="questions.questiondesc != null" >
+      and QuestionDesc = #{questions.questiondesc}
+    </if>
+    <if test="questions.studentid != null" >
+      and q.StudentID = #{questions.studentid}
+    </if>
+    <if test="questions.teacherid != null" >
+      and q.TeacherID = #{questions.teacherid}
+    </if>
+    <if test="questions.questionanswer != null" >
+      and QuestionAnswer = #{questions.questionanswer}
+    </if>
+    <if test="questions.questiontime != null" >
+      and QuestionTime = #{questions.questiontime}
+    </if>
+    <if test="questions.answertime != null" >
+      and AnswerTime = #{questions.answertime}
+    </if>
+    <if test="type == 0">
+    	and AnswerTime is null
+    </if>
+    <if test="type == 1">
+    	and AnswerTime is not null
+    </if>
+  </select>
+  
+  <select id="count" resultType="java.lang.Long" parameterType="worksystem.base.model.Questions" >
+    select count(*) from questions
+    where 1=1
+    <if test="questionid != null" >
+      and QuestionID = #{questionid}
+    </if>
+    <if test="questiondesc != null" >
+      and QuestionDesc = #{questiondesc}
+    </if>
+    <if test="studentid != null" >
+      and StudentID = #{studentid}
+    </if>
+    <if test="teacherid != null" >
+      and TeacherID = #{teacherid}
+    </if>
+    <if test="questionanswer != null" >
+      and QuestionAnswer = #{questionanswer}
+    </if>
+    <if test="questiontime != null" >
+      and QuestionTime = #{questiontime}
+    </if>
+    <if test="answertime != null" >
+      and AnswerTime = #{answertime}
+    </if>
+  </select>
+  
+</mapper>

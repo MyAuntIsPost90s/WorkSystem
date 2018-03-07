@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>作业管理</title>
+    <link rel="stylesheet" href="../../Contents/lib/layui/css/layui.css">
+    <link rel="stylesheet" href="../../Contents/lib/easyui-theme/themes/insdep/easyui.css">
+    <link rel="stylesheet" href="../../Contents/lib/easyui-theme/themes/insdep/icon.css">
+    <script src="../../Contents/js/config.js"></script>
+    <script src="../../Contents/js/jquery.min.js"></script>
+    <script src="../../Contents/lib/easyui-theme/jquery.easyui.min.js"></script>
+    <script src="../../Contents/lib/easyui-theme/locale/easyui-lang-zh_CN.js"></script>
+    <script src="../../Contents/js/easyui.util.js"></script>
+    <script src="../../Contents/lib/lingshiframework/lingshi_base.js?version=0.0.1"></script>
+    <script src="../../Contents/js/layui.util.js"></script>
+    <script src="../../Contents/js/md5.js"></script>
+</head>
+<body>
+<div class="easyui-layout" data-options='fit:"true"'>
+    <div data-options='region:"west",collapsible:false' title="班级信息" style="width:220px;">
+        <ul id="tree-teacherclass"></ul>
+    </div>
+    <div data-options='region:"center"'>
+        <table id="table-work" class="easyui-datagrid" class="easyui-datagrid"></table>
+    </div>
+</div>
+<script src="../../Contents/lib/layui/layui.all.js"></script>
+<script>
+    var nodeid=-1;
+    $(function () {
+        EasyUIUtil.initTree('#tree-teacherclass', Config.UrlHead + '/teacherClasses/tree');  //加载树
+        $('#tree-teacherclass').tree({
+            onClick:function(node){
+                if(node.id!='-1'){
+                    nodeid=node.id;
+                    initDataGrid(node.id)
+                }
+            }
+        });
+
+        initDataGrid(-1);
+    })
+
+    //批量删除
+    function batchDelete() {
+        var rows = $('#table-work').datagrid('getChecked');
+        if (rows.length < 1) {
+            return;
+        }
+        var ids = [];
+        for (var i = 0; i < rows.length; i++) {
+            ids.push(rows[i].workid);
+        }
+        layer.confirm("是否确定删除", function (index) {
+            $.ajax({
+                url: Config.UrlHead + '/works/batchDelete',
+                contentType: "application/json ; charset=utf-8",
+                data: JSON.stringify(ids),
+                method: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    layer.close(index);
+                    layer.msg(data.msg);
+                    $('#table-work').datagrid('reload');
+                }
+            });
+        }, function (index) {
+            layer.close(index);
+        });
+    }
+
+    //下载附件
+    function download(path){
+        LingShiFileUtil.download(Config.UrlHead+"/downloader/download",{path:path});
+    }
+
+    //点击删除事件
+    function del(id) {
+        var ids = [];
+        ids.push(id);
+        layer.confirm("是否确定删除", function (index) {
+            $.ajax({
+                url: Config.UrlHead + '/works/batchDelete',
+                contentType: "application/json ; charset=utf-8",
+                data: JSON.stringify(ids),
+                method: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    layer.close(index);
+                    layer.msg(data.msg);
+                    $('#table-work').datagrid('reload');
+                }
+            });
+        }, function (index) {
+            layer.close(index);
+        });
+    }
+
+    //初始化表格数据
+    function initDataGrid(id) {
+        EasyUIUtil.initDataGrid('#table-work', Config.UrlHead + "/works/list",getColumns(),{studentclassid:id,type:0});
+        var pager=$('#table-work').datagrid('getPager');
+        pager.pagination({
+            showPageList: true,
+            buttons: [{
+                iconCls: 'icon-remove',
+                handler: function () {
+                    batchDelete();
+                }
+            }],
+            onBeforeRefresh: function () {
+                return true;
+            }
+        });
+    }
+
+    //获取列
+    function getColumns(){
+        var columns=[[
+            {field:'ck',checkbox:true},
+            {
+                field:'workid',
+                width:100,
+                align:'center',
+                title:"操作",
+                formatter:function(val,row){
+                    return '<button class="layui-btn layui-btn-xs layui-btn-danger" onclick="del(\'' + row.workid + '\')"><i class="layui-icon">&#xe640;</i>移除</button>'
+                        +'<button class="layui-btn layui-btn-xs" onclick="download(\'' + row.workurl + '\')"><i class="layui-icon">&#xe705;</i>下载附件</button>';
+                }
+            },
+            {field:'workcommittime',width:100,align:'center',title:"完成时间"},
+            {field:'workcreatetime',width:100,align:'center',title:"设置时间"},
+            {field:'workdesc',width:100,align:'center',title:"备注"}
+        ]];
+        return columns;
+    }
+</script>
+</body>
+</html>

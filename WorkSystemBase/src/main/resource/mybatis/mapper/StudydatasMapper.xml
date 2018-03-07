@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="worksystem.base.dao.StudydatasMapper" >
+  <select id="getList" resultType="worksystem.base.model.Studydatas" parameterType="worksystem.base.model.Studydatas" >
+    select * from studydatas
+    where 1=1
+    <if test="studydataid != null" >
+      and StudyDataID = #{studydataid}
+    </if>
+    <if test="studydataurl != null" >
+      and StudyDataUrl = #{studydataurl}
+    </if>
+    <if test="studydatadesc != null" >
+      and StudyDataDesc = #{studydatadesc}
+    </if>
+  </select>
+  
+  <select id="getSingle" resultType="worksystem.base.model.Studydatas" >
+    select * from studydatas
+    where StudyDataID = #{id}
+    limit 0,1
+  </select>
+  
+  <insert id="insert" parameterType="worksystem.base.model.Studydatas" >
+    insert into studydatas
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="studydataid != null" >
+        StudyDataID,
+      </if>
+      <if test="studydataurl != null" >
+        StudyDataUrl,
+      </if>
+      <if test="studydatadesc != null" >
+        StudyDataDesc
+      </if>
+    </trim>
+    <trim prefix="values(" suffix=")" suffixOverrides="," >
+      <if test="studydataid != null" >
+        #{studydataid},
+      </if>
+      <if test="studydataurl != null" >
+        #{studydataurl},
+      </if>
+      <if test="studydatadesc != null" >
+        #{studydatadesc}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="worksystem.base.model.Studydatas" >
+    update studydatas
+    <set >
+      <if test="studydataurl != null" >
+        StudyDataUrl = #{studydataurl},
+      </if>
+      <if test="studydatadesc != null" >
+        StudyDataDesc = #{studydatadesc}
+      </if>
+    </set>
+    where
+    StudyDataID = #{studydataid}
+  </update>
+  
+  <delete id="batchDelete" >
+    delete from studydatas
+    where StudyDataID in(
+    <foreach item="item" collection="list" separator="," >
+      #{item}
+    </foreach>
+    )
+  </delete>
+  
+  <select id="getListWithPage" resultType="worksystem.base.model.Studydatas" parameterType="worksystem.base.model.Studydatas" >
+    select * from studydatas
+    where 1=1
+    <if test="studydataid != null" >
+      and StudyDataID = #{studydataid}
+    </if>
+    <if test="studydataurl != null" >
+      and StudyDataUrl = #{studydataurl}
+    </if>
+    <if test="studydatadesc != null" >
+      and StudyDataDesc = #{studydatadesc}
+    </if>
+  </select>
+  
+  <select id="count" resultType="java.lang.Long" parameterType="worksystem.base.model.Studydatas" >
+    select count(*) from studydatas
+    where 1=1
+    <if test="studydataid != null" >
+      and StudyDataID = #{studydataid}
+    </if>
+    <if test="studydataurl != null" >
+      and StudyDataUrl = #{studydataurl}
+    </if>
+    <if test="studydatadesc != null" >
+      and StudyDataDesc = #{studydatadesc}
+    </if>
+  </select>
+  
+</mapper>

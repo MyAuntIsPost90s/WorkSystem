@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="worksystem.base.dao.StudentworkimgsMapper" >
+  <select id="getList" resultType="worksystem.base.model.Studentworkimgs" parameterType="worksystem.base.model.Studentworkimgs" >
+    select * from studentworkimgs
+    where 1=1
+    <if test="studentworkimgid != null" >
+      and StudentWorkImgID = #{studentworkimgid}
+    </if>
+    <if test="studentworkid != null" >
+      and StudentWorkID = #{studentworkid}
+    </if>
+    <if test="studentworkimgurl != null" >
+      and StudentWorkImgUrl = #{studentworkimgurl}
+    </if>
+  </select>
+  
+  <select id="getListByWorkID" resultType="worksystem.base.model.Studentworkimgs" >
+    select * from studentworkimgs
+    where 1=1
+    <if test="studentworkid != null" >
+      and StudentWorkID = #{studentworkid}
+    </if>
+  </select>
+  
+  <select id="getSingle" resultType="worksystem.base.model.Studentworkimgs" >
+    select * from studentworkimgs
+    where StudentWorkImgID = #{id}
+    limit 0,1
+  </select>
+  
+  <insert id="insert" parameterType="worksystem.base.model.Studentworkimgs" >
+    insert into studentworkimgs
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="studentworkimgid != null" >
+        StudentWorkImgID,
+      </if>
+      <if test="studentworkid != null" >
+        StudentWorkID,
+      </if>
+      <if test="studentworkimgurl != null" >
+        StudentWorkImgUrl
+      </if>
+    </trim>
+    <trim prefix="values(" suffix=")" suffixOverrides="," >
+      <if test="studentworkimgid != null" >
+        #{studentworkimgid},
+      </if>
+      <if test="studentworkid != null" >
+        #{studentworkid},
+      </if>
+      <if test="studentworkimgurl != null" >
+        #{studentworkimgurl}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="worksystem.base.model.Studentworkimgs" >
+    update studentworkimgs
+    <set >
+      <if test="studentworkid != null" >
+        StudentWorkID = #{studentworkid},
+      </if>
+      <if test="studentworkimgurl != null" >
+        StudentWorkImgUrl = #{studentworkimgurl}
+      </if>
+    </set>
+    where
+    StudentWorkImgID = #{studentworkimgid}
+  </update>
+  
+  <delete id="batchDelete" >
+    delete from studentworkimgs
+    where StudentWorkImgID in(
+    <foreach item="item" collection="list" separator="," >
+      #{item}
+    </foreach>
+    )
+  </delete>
+  
+  <delete id="deleteByStudentWorkId">
+   	delete from studentworkimgs
+    where StudentWorkID = #{studentworkid}
+  </delete>
+  
+  <select id="getListWithPage" resultType="worksystem.base.model.Studentworkimgs" parameterType="worksystem.base.model.Studentworkimgs" >
+    select * from studentworkimgs
+    where 1=1
+    <if test="studentworkimgid != null" >
+      and StudentWorkImgID = #{studentworkimgid}
+    </if>
+    <if test="studentworkid != null" >
+      and StudentWorkID = #{studentworkid}
+    </if>
+    <if test="studentworkimgurl != null" >
+      and StudentWorkImgUrl = #{studentworkimgurl}
+    </if>
+  </select>
+  
+  <select id="count" resultType="java.lang.Long" parameterType="worksystem.base.model.Studentworkimgs" >
+    select count(*) from studentworkimgs
+    where 1=1
+    <if test="studentworkimgid != null" >
+      and StudentWorkImgID = #{studentworkimgid}
+    </if>
+    <if test="studentworkid != null" >
+      and StudentWorkID = #{studentworkid}
+    </if>
+    <if test="studentworkimgurl != null" >
+      and StudentWorkImgUrl = #{studentworkimgurl}
+    </if>
+  </select>
+  
+</mapper>

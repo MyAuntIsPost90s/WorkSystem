@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>作业管理</title>
+    <link rel="stylesheet" href="../../Contents/lib/layui/css/layui.css">
+    <link rel="stylesheet" href="../../Contents/lib/easyui-theme/themes/insdep/easyui.css">
+    <link rel="stylesheet" href="../../Contents/lib/easyui-theme/themes/insdep/icon.css">
+    <script src="../../Contents/js/config.js"></script>
+    <script src="../../Contents/js/jquery.min.js"></script>
+    <script src="../../Contents/lib/easyui-theme/jquery.easyui.min.js"></script>
+    <script src="../../Contents/lib/easyui-theme/locale/easyui-lang-zh_CN.js"></script>
+    <script src="../../Contents/js/easyui.util.js"></script>
+    <script src="../../Contents/lib/lingshiframework/lingshi_base.js?version=0"></script>
+    <script src="../../Contents/js/layui.util.js"></script>
+    <script src="../../Contents/js/md5.js"></script>
+</head>
+<body>
+<div class="easyui-layout" data-options='fit:"true"'>
+    <div data-options='region:"center"'>
+        <table id="table-work" class="easyui-datagrid" class="easyui-datagrid"></table>
+    </div>
+</div>
+<!-- 查看备注窗体 -->
+<script id="lay-workform" type="text/html">
+    <div style="padding: 10px;padding-right: 30px">
+        <form class="layui-form layui-form-pane" id="form-work">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <textarea id="tarea-workdesc" readonly placeholder="备注" class="layui-textarea"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+<!-- 批改结果展示框 -->
+<script id="lay-studentworkrevise" type="text/html">
+    <div style="padding: 10px;padding-right: 30px">
+        <form class="layui-form layui-form-pane" id="form-studentworkrevise">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">作业图片</label>
+                <div class="layui-input-block" id="img-studentworkimgs" style="overflow-y: auto;max-height: 200px">
+                    <div style="text-align: center;color:#888;padding: 5px">暂无</div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">分数</label>
+                <div class="layui-input-block">
+                    <input name="workscore" readonly type="number" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">批改备注</label>
+                <div class="layui-input-block">
+                    <textarea id="tarea-workassess" readonly placeholder="请输入内容" class="layui-textarea"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+<script src="../../Contents/lib/layui/layui.all.js"></script>
+<script>
+    $(function () {
+        initDataGrid();
+    })
+
+    //展示详情
+    function showWorkDesc(id){
+        var index = layer.open({type:3});
+        $.post(Config.UrlHead+'/works/single'
+            ,{workId:id}
+            ,function (data) {
+                layer.close(index);
+                layer.open({
+                    type:1
+                    ,area: ["500px","280px"]
+                    ,title:'查看备注'
+                    ,content:$('#lay-workform').html()
+                    ,success:function(){
+                        $('#opt-type').val('edit');
+                        if(data.code==1){
+                            $('#tarea-workdesc').val(data.data.workdesc);
+                        }else {
+                            layer.msg(data.msg);
+                        }
+                        layui.form.render();
+                    }
+                })
+            },'json');
+    }
+
+    //展示批改结果
+    function showWorkResive(id){
+        var index = layer.open({type:3});
+        $.post(Config.UrlHead+'/studentWorks/single4workId'
+            ,{studentworkId:id}
+            ,function (data) {
+                layer.close(index);
+                layer.open({
+                    type:1
+                    ,area: ['700px','650px']
+                    ,title:'查看结果'
+                    ,content:$('#lay-studentworkrevise').html()
+                    ,success:function(){
+                        $('#opt-type').val('edit');
+                        if(data.code==1){
+                            if(data.data.studentworkimgs!=null&&data.data.studentworkimgs.length>0){
+                                var imghtml="";
+                                var imgs=data.data.studentworkimgs;
+                                var html='';
+                                for(var i=0;i<imgs.length;i++){
+                                    html+='<img src="'+(Config.UrlHead+imgs[i].studentworkimgurl)+'" width="100%"/>'
+                                }
+                                $('#img-studentworkimgs').html(html);
+                            }
+                            $('#tarea-workassess').html(data.data.workassess);
+                            $('#inp-studentname').val(data.data.students.studentname);
+                            FormUtil.loadForm('#form-studentworkrevise',data.data);
+                        }else {
+                            layer.msg(data.msg);
+                        }
+                        layui.form.render();
+                    }
+                })
+            },'json');
+    }
+
+    //下载附件
+    function download(path){
+        LingShiFileUtil.download(Config.UrlHead+"/downloader/download",{path:path});
+    }
+
+    //初始化表格数据
+    function initDataGrid(id) {
+        EasyUIUtil.initDataGrid('#table-work', Config.UrlHead + "/works/list",getColumns(),{type:0 });
+        var pager=$('#table-work').datagrid('getPager');
+        pager.pagination({
+            showPageList: true,
+            buttons: [],
+            onBeforeRefresh: function () {
+                return true;
+            }
+        });
+    }
+
+    //获取列
+    function getColumns(){
+        var columns=[[
+            {field:'ck',checkbox:true},
+            {
+                field:'workid',
+                width:100,
+                align:'center',
+                title:"操作",
+                formatter:function(val,row){
+                    var html='<button class="layui-btn layui-btn-xs layui-btn-normal" onclick="showWorkDesc(\'' + val + '\')"><i class="layui-icon">&#xe615;</i>查看</button>'
+                        + '<button class="layui-btn layui-btn-xs" onclick="download(\'' + row.workurl + '\')"><i class="layui-icon">&#xe705;</i>下载附件</button>';
+                    if(row.revised==true){
+                        html='<button class="layui-btn layui-btn-xs layui-btn-primary" onclick="showWorkResive(\'' + val + '\')"><i class="layui-icon">&#xe622;</i>批改结果</button>'
+                            + '<button class="layui-btn layui-btn-xs layui-btn-normal" onclick="showWorkDesc(\'' + val + '\')"><i class="layui-icon">&#xe615;</i>查看</button>'
+                            + '<button class="layui-btn layui-btn-xs" onclick="download(\'' + row.workurl + '\')"><i class="layui-icon">&#xe705;</i>下载附件</button>';
+                    }
+                    return html;
+                }
+            },
+            {
+                field:'teachers',
+                width:50,
+                align:'center',
+                title:"老师",
+                formatter:function(val,row){
+                    return val.teachername;
+                }
+            },
+            {field:'workcommittime',width:100,align:'center',title:"完成时间"},
+            {field:'workcreatetime',width:100,align:'center',title:"设置时间"},
+            {field:'workdesc',width:100,align:'center',title:"备注"}
+        ]];
+        return columns;
+    }
+</script>
+</body>
+</html>

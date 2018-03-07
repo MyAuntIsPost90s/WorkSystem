@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="worksystem.base.dao.StudentworksMapper" >
+  <resultMap type="worksystem.base.model.dto.StudentWorksDto" id="StudentWorksMap" autoMapping="true">
+  	<id property="studentworkid" column="studentworkid"></id>
+  	<association property="students" javaType="worksystem.base.model.Students" autoMapping="true"></association>
+  	<association property="teachers" javaType="worksystem.base.model.Teachers" autoMapping="true"></association>
+  </resultMap>
+  <select id="getList" resultMap="StudentWorksMap" parameterType="worksystem.base.model.Studentworks" >
+    SELECT sw.*
+	,s.StudentName,s.StudentAge,s.StudentClassID,s.StudentSex
+	,t.TeacherName,t.TeacherAge,t.TeacherSex
+	FROM studentworks sw
+	LEFT JOIN students s ON sw.StudentID = s.StudentID
+	LEFT JOIN teachers t ON sw.TeacherID =t.TeacherID
+    where 1=1
+    <if test="studentworkid != null" >
+      and sw.StudentWorkID = #{studentworkid}
+    </if>
+    <if test="studentid != null" >
+      and sw.StudentID = #{studentid}
+    </if>
+    <if test="teacherid != null" >
+      and sw.TeacherID = #{teacherid}
+    </if>
+    <if test="workid != null" >
+      and sw.WorkID = #{workid}
+    </if>
+    <if test="workscore != null" >
+      and sw.WorkScore = #{workscore}
+    </if>
+    <if test="workassess != null" >
+      and sw.WorkAssess = #{workassess}
+    </if>
+  </select>
+  
+  <select id="getSingle" resultMap="StudentWorksMap" >
+    SELECT sw.*
+	,s.StudentName,s.StudentAge,s.StudentClassID,s.StudentSex
+	,t.TeacherName,t.TeacherAge,t.TeacherSex
+	FROM studentworks sw
+	LEFT JOIN students s ON sw.StudentID = s.StudentID
+	LEFT JOIN teachers t ON sw.TeacherID =t.TeacherID
+    where StudentWorkID = #{id}
+    limit 0,1
+  </select>
+  
+  <insert id="insert" parameterType="worksystem.base.model.Studentworks" useGeneratedKeys="true" keyProperty="studentworkid" >
+    insert into studentworks
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="studentworkid != null" >
+        StudentWorkID,
+      </if>
+      <if test="studentid != null" >
+        StudentID,
+      </if>
+      <if test="teacherid != null" >
+        TeacherID,
+      </if>
+      <if test="workid != null" >
+        WorkID,
+      </if>
+      <if test="workscore != null" >
+        WorkScore,
+      </if>
+      <if test="workassess != null" >
+        WorkAssess
+      </if>
+    </trim>
+    <trim prefix="values(" suffix=")" suffixOverrides="," >
+      <if test="studentworkid != null" >
+        #{studentworkid},
+      </if>
+      <if test="studentid != null" >
+        #{studentid},
+      </if>
+      <if test="teacherid != null" >
+        #{teacherid},
+      </if>
+      <if test="workid != null" >
+        #{workid},
+      </if>
+      <if test="workscore != null" >
+        #{workscore},
+      </if>
+      <if test="workassess != null" >
+        #{workassess}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="worksystem.base.model.Studentworks" >
+    update studentworks
+    <set >
+      <if test="studentid != null" >
+        StudentID = #{studentid},
+      </if>
+      <if test="teacherid != null" >
+        TeacherID = #{teacherid},
+      </if>
+      <if test="workid != null" >
+        WorkID = #{workid},
+      </if>
+      <if test="workscore != null" >
+        WorkScore = #{workscore},
+      </if>
+      <if test="workassess != null" >
+        WorkAssess = #{workassess}
+      </if>
+    </set>
+    where
+    StudentWorkID = #{studentworkid}
+  </update>
+  
+  <delete id="batchDelete" >
+    delete from studentworks
+    where StudentWorkID in(
+    <foreach item="item" collection="list" separator="," >
+      #{item}
+    </foreach>
+    )
+  </delete>
+  
+  <select id="getListWithPage" resultMap="StudentWorksMap" parameterType="worksystem.base.model.Studentworks" >
+     SELECT sw.*
+	,s.StudentName,s.StudentAge,s.StudentClassID,s.StudentSex
+	,t.TeacherName,t.TeacherAge,t.TeacherSex
+	FROM studentworks sw
+	LEFT JOIN students s ON sw.StudentID = s.StudentID
+	LEFT JOIN teachers t ON sw.TeacherID =t.TeacherID
+    where 1=1
+    <if test="studentworkid != null" >
+      and sw.StudentWorkID = #{studentworkid}
+    </if>
+    <if test="studentid != null" >
+      and sw.StudentID = #{studentid}
+    </if>
+    <if test="teacherid != null" >
+      and sw.TeacherID = #{teacherid}
+    </if>
+    <if test="workid != null" >
+      and sw.WorkID = #{workid}
+    </if>
+    <if test="workscore != null" >
+      and sw.WorkScore = #{workscore}
+    </if>
+    <if test="workassess != null" >
+      and sw.WorkAssess = #{workassess}
+    </if>
+  </select>
+  
+  <select id="getListWithType" resultMap="StudentWorksMap">
+     SELECT sw.*
+	,s.StudentName,s.StudentAge,s.StudentClassID,s.StudentSex
+	,t.TeacherName,t.TeacherAge,t.TeacherSex
+	FROM studentworks sw
+	LEFT JOIN students s ON sw.StudentID = s.StudentID
+	LEFT JOIN teachers t ON sw.TeacherID =t.TeacherID
+    where 1=1
+    <if test="studentworks.studentworkid != null" >
+      and sw.StudentWorkID = #{studentworks.studentworkid}
+    </if>
+    <if test="studentworks.studentid != null" >
+      and sw.StudentID = #{studentworks.studentid}
+    </if>
+    <if test="studentworks.teacherid != null" >
+      and sw.TeacherID = #{studentworks.teacherid}
+    </if>
+    <if test="studentworks.workid != null" >
+      and sw.WorkID = #{studentworks.workid}
+    </if>
+    <if test="studentworks.workscore != null" >
+      and sw.WorkScore = #{studentworks.workscore}
+    </if>
+    <if test="studentworks.workassess != null" >
+      and sw.WorkAssess = #{studentworks.workassess}
+    </if>
+    <if test="type==0">
+      and sw.WorkScore is null
+    </if>
+    <if test="type==1">
+      and sw.WorkScore is not null
+    </if>
+  </select>
+  
+  <select id="count" resultType="java.lang.Long" parameterType="worksystem.base.model.Studentworks" >
+    select count(*) from studentworks
+    where 1=1
+    <if test="studentworkid != null" >
+      and StudentWorkID = #{studentworkid}
+    </if>
+    <if test="studentid != null" >
+      and StudentID = #{studentid}
+    </if>
+    <if test="teacherid != null" >
+      and TeacherID = #{teacherid}
+    </if>
+    <if test="workid != null" >
+      and WorkID = #{workid}
+    </if>
+    <if test="workscore != null" >
+      and WorkScore = #{workscore}
+    </if>
+    <if test="workassess != null" >
+      and WorkAssess = #{workassess}
+    </if>
+  </select>
+  
+</mapper>

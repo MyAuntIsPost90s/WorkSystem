@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="worksystem.base.dao.StudentsMapper" >
+  <select id="getList" resultType="worksystem.base.model.dto.StudentsDto" parameterType="worksystem.base.model.Students" >
+    SELECT s.*,sc.StudentClassName FROM students s
+	LEFT JOIN studentclass sc ON s.StudentClassID=sc.StudentClassID
+    where 1=1
+    <if test="studentid != null" >
+      and StudentID = #{studentid}
+    </if>
+    <if test="studentclassid != null" >
+      and StudentClassID = #{studentclassid}
+    </if>
+    <if test="studentidcard != null" >
+      and StudentIDCard = #{studentidcard}
+    </if>
+    <if test="studentage != null" >
+      and StudentAge = #{studentage}
+    </if>
+    <if test="studentname != null" >
+      and StudentName = #{studentname}
+    </if>
+    <if test="studentsex != null" >
+      and StudentSex = #{studentsex}
+    </if>
+    <if test="studentpwd != null" >
+      and StudentPwd = #{studentpwd}
+    </if>
+  </select>
+  
+  <select id="getSingle" resultType="worksystem.base.model.dto.StudentsDto" >
+    SELECT s.*,sc.StudentClassName FROM students s
+	LEFT JOIN studentclass sc ON s.StudentClassID=sc.StudentClassID
+    where StudentID = #{id}
+    limit 0,1
+  </select>
+  
+  <insert id="insert" parameterType="worksystem.base.model.Students" >
+    insert into students
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="studentid != null" >
+        StudentID,
+      </if>
+      <if test="studentclassid != null" >
+        StudentClassID,
+      </if>
+      <if test="studentidcard != null" >
+        StudentIDCard,
+      </if>
+      <if test="studentage != null" >
+        StudentAge,
+      </if>
+      <if test="studentname != null" >
+        StudentName,
+      </if>
+      <if test="studentsex != null" >
+        StudentSex,
+      </if>
+      <if test="studentpwd != null" >
+        StudentPwd
+      </if>
+    </trim>
+    <trim prefix="values(" suffix=")" suffixOverrides="," >
+      <if test="studentid != null" >
+        #{studentid},
+      </if>
+      <if test="studentclassid != null" >
+        #{studentclassid},
+      </if>
+      <if test="studentidcard != null" >
+        #{studentidcard},
+      </if>
+      <if test="studentage != null" >
+        #{studentage},
+      </if>
+      <if test="studentname != null" >
+        #{studentname},
+      </if>
+      <if test="studentsex != null" >
+        #{studentsex},
+      </if>
+      <if test="studentpwd != null" >
+        #{studentpwd}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="worksystem.base.model.Students" >
+    update students
+    <set >
+      <if test="studentclassid != null" >
+        StudentClassID = #{studentclassid},
+      </if>
+      <if test="studentidcard != null" >
+        StudentIDCard = #{studentidcard},
+      </if>
+      <if test="studentage != null" >
+        StudentAge = #{studentage},
+      </if>
+      <if test="studentname != null" >
+        StudentName = #{studentname},
+      </if>
+      <if test="studentsex != null" >
+        StudentSex = #{studentsex},
+      </if>
+      <if test="studentpwd != null" >
+        StudentPwd = #{studentpwd}
+      </if>
+    </set>
+    where
+    StudentID = #{studentid}
+  </update>
+  
+  <delete id="batchDelete" >
+    delete from students
+    where StudentID in(
+    <foreach item="item" collection="list" separator="," >
+      #{item}
+    </foreach>
+    )
+  </delete>
+  
+  <select id="getListWithPage" resultType="worksystem.base.model.dto.StudentsDto" parameterType="worksystem.base.model.Students" >
+    SELECT s.*,sc.StudentClassName FROM students s
+	LEFT JOIN studentclass sc ON s.StudentClassID=sc.StudentClassID
+    where 1=1
+    <if test="studentid != null" >
+      and StudentID = #{studentid}
+    </if>
+    <if test="studentclassid != null" >
+      and StudentClassID = #{studentclassid}
+    </if>
+    <if test="studentidcard != null" >
+      and StudentIDCard = #{studentidcard}
+    </if>
+    <if test="studentage != null" >
+      and StudentAge = #{studentage}
+    </if>
+    <if test="studentname != null" >
+      and StudentName = #{studentname}
+    </if>
+    <if test="studentsex != null" >
+      and StudentSex = #{studentsex}
+    </if>
+    <if test="studentpwd != null" >
+      and StudentPwd = #{studentpwd}
+    </if>
+  </select>
+  
+  <select id="count" resultType="java.lang.Long" parameterType="worksystem.base.model.Students" >
+    select count(*) from students
+    where 1=1
+    <if test="studentid != null" >
+      and StudentID = #{studentid}
+    </if>
+    <if test="studentclassid != null" >
+      and StudentClassID = #{studentclassid}
+    </if>
+    <if test="studentidcard != null" >
+      and StudentIDCard = #{studentidcard}
+    </if>
+    <if test="studentage != null" >
+      and StudentAge = #{studentage}
+    </if>
+    <if test="studentname != null" >
+      and StudentName = #{studentname}
+    </if>
+    <if test="studentsex != null" >
+      and StudentSex = #{studentsex}
+    </if>
+    <if test="studentpwd != null" >
+      and StudentPwd = #{studentpwd}
+    </if>
+  </select>
+  
+</mapper>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="worksystem.base.dao.WorksMapper" >
+  <resultMap type="worksystem.base.model.dto.WorksDto" id="WorksDtoMap" autoMapping="true">
+  	<id property="workid" column="workid" />
+  	<association property="teachers" javaType="worksystem.base.model.Teachers" autoMapping="true"></association>
+  </resultMap>
+  <select id="getList" resultMap="WorksDtoMap" parameterType="worksystem.base.model.Works" >
+    SELECT w.*
+	,t.TeacherName,t.TeacherSex,t.TeacherIDCard
+	FROM works w
+	LEFT JOIN teachers t ON w.TeacherID=t.TeacherID
+    where 1=1
+   <if test="workid != null" >
+      and w.WorkID = #{workid}
+    </if>
+    <if test="studentclassid != null" >
+      and w.StudentClassID = #{studentclassid}
+    </if>
+    <if test="workurl != null" >
+      and w.WorkUrl = #{workurl}
+    </if>
+    <if test="workdesc != null" >
+      and w.WorkDesc = #{workdesc}
+    </if>
+    <if test="workcreatetime != null" >
+      and w.WorkCreateTime = #{workcreatetime}
+    </if>
+    <if test="workcommittime != null" >
+      and w.WorkCommitTime = #{workcommittime}
+    </if>
+    <if test="teacherid != null" >
+      and w.TeacherID = #{teacherid}
+    </if>
+  </select>
+  
+  <select id="getSingle" resultMap="WorksDtoMap" >
+    SELECT w.*
+	,t.TeacherName,t.TeacherSex,t.TeacherIDCard
+	FROM works w
+	LEFT JOIN teachers t ON w.TeacherID=t.TeacherID
+    where WorkID = #{id}
+    limit 0,1
+  </select>
+  
+  <insert id="insert" parameterType="worksystem.base.model.Works" >
+    insert into works
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="workid != null" >
+        WorkID,
+      </if>
+      <if test="studentclassid != null" >
+        StudentClassID,
+      </if>
+      <if test="workurl != null" >
+        WorkUrl,
+      </if>
+      <if test="workdesc != null" >
+        WorkDesc,
+      </if>
+      <if test="workcreatetime != null" >
+        WorkCreateTime,
+      </if>
+      <if test="workcommittime != null" >
+        WorkCommitTime,
+      </if>
+      <if test="teacherid != null" >
+        TeacherID
+      </if>
+    </trim>
+    <trim prefix="values(" suffix=")" suffixOverrides="," >
+      <if test="workid != null" >
+        #{workid},
+      </if>
+      <if test="studentclassid != null" >
+        #{studentclassid},
+      </if>
+      <if test="workurl != null" >
+        #{workurl},
+      </if>
+      <if test="workdesc != null" >
+        #{workdesc},
+      </if>
+      <if test="workcreatetime != null" >
+        #{workcreatetime},
+      </if>
+      <if test="workcommittime != null" >
+        #{workcommittime},
+      </if>
+      <if test="teacherid != null" >
+        #{teacherid}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="worksystem.base.model.Works" >
+    update works
+    <set >
+      <if test="studentclassid != null" >
+        StudentClassID = #{studentclassid},
+      </if>
+      <if test="workurl != null" >
+        WorkUrl = #{workurl},
+      </if>
+      <if test="workdesc != null" >
+        WorkDesc = #{workdesc},
+      </if>
+      <if test="workcreatetime != null" >
+        WorkCreateTime = #{workcreatetime},
+      </if>
+      <if test="workcommittime != null" >
+        WorkCommitTime = #{workcommittime},
+      </if>
+      <if test="teacherid != null" >
+        TeacherID = #{teacherid}
+      </if>
+    </set>
+    where
+    WorkID = #{workid}
+  </update>
+  
+  <delete id="batchDelete" >
+    delete from works
+    where WorkID in(
+    <foreach item="item" collection="list" separator="," >
+      #{item}
+    </foreach>
+    )
+  </delete>
+  
+  <select id="getListWithPage" resultMap="WorksDtoMap" parameterType="worksystem.base.model.Works" >
+   SELECT w.*
+	,t.TeacherName,t.TeacherSex,t.TeacherIDCard
+	FROM works w
+	LEFT JOIN teachers t ON w.TeacherID=t.TeacherID
+    where 1=1
+    <if test="workid != null" >
+      and w.WorkID = #{workid}
+    </if>
+    <if test="studentclassid != null" >
+      and w.StudentClassID = #{studentclassid}
+    </if>
+    <if test="workurl != null" >
+      and w.WorkUrl = #{workurl}
+    </if>
+    <if test="workdesc != null" >
+      and w.WorkDesc = #{workdesc}
+    </if>
+    <if test="workcreatetime != null" >
+      and w.WorkCreateTime = #{workcreatetime}
+    </if>
+    <if test="workcommittime != null" >
+      and w.WorkCommitTime = #{workcommittime}
+    </if>
+    <if test="teacherid != null" >
+      and w.TeacherID = #{teacherid}
+    </if>
+  </select>
+  
+   <select id="getListWithType" resultMap="WorksDtoMap" >
+  	SELECT w.*
+	,t.TeacherName,t.TeacherSex,t.TeacherIDCard
+	FROM works w
+	LEFT JOIN teachers t ON w.TeacherID=t.TeacherID
+    where 1=1
+    <if test="studentclassid != null" >
+      and w.StudentClassID = #{studentclassid}
+    </if>
+    <if test=" type == 0" >
+      <![CDATA[ and w.WorkCommitTime <= now() ]]>
+    </if>
+    <if test=" type == 1" >
+      <![CDATA[ and w.WorkCommitTime > now() ]]>
+    </if>
+   </select>
+  
+  <select id="count" resultType="java.lang.Long" parameterType="worksystem.base.model.Works" >
+    select count(*) from works
+    where 1=1
+    <if test="workid != null" >
+      and WorkID = #{workid}
+    </if>
+    <if test="studentclassid != null" >
+      and StudentClassID = #{studentclassid}
+    </if>
+    <if test="workurl != null" >
+      and WorkUrl = #{workurl}
+    </if>
+    <if test="workdesc != null" >
+      and WorkDesc = #{workdesc}
+    </if>
+    <if test="workcreatetime != null" >
+      and WorkCreateTime = #{workcreatetime}
+    </if>
+    <if test="workcommittime != null" >
+      and WorkCommitTime = #{workcommittime}
+    </if>
+    <if test="teacherid != null" >
+      and TeacherID = #{teacherid}
+    </if>
+  </select>
+  
+</mapper>

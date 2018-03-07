@@ -1,0 +1,127 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>登陆-后台管理</title>
+    <link href="Contents/lib/login-theme/style_log.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="Contents/lib/login-theme/style.css">
+    <link rel="stylesheet" type="text/css" href="Contents/lib/login-theme/userpanel.css">
+    <link rel="stylesheet" type="text/css" href="Contents/lib/layui/css/layui.css">
+    <link rel="stylesheet" href="Contents/lib/login-bg/css/crowd.css">
+
+    <script type="text/javascript" src="Contents/js/jquery.min.js"></script>
+    <script type="text/javascript" src="Contents/js/md5.js"></script>
+    <script type="text/javascript" src="Contents/js/config.js?version=0"></script>
+    <script type="text/javascript" src="Contents/lib/layui/layui.all.js"></script>
+    <script src="Contents/lib/lingshiframework/lingshi_base.js"></script>
+</head>
+<body>
+<header style="position: absolute;z-index: -99">
+    <div class="bg">
+        <canvas id="display"></canvas>
+        <div id="blachole"></div>
+    </div>
+</header>
+<div class="login_m"  style="margin-top: 0px;padding-top:98px">
+    <div class="login_logo">
+        <img src="Contents/lib/login-theme/logo.png" width="196" height="46">
+    </div>
+    <div class="login_boder">
+        <div class="login_padding" id="login_model">
+            <h2>用户名</h2>
+            <label>
+                <input type="text" name="username" id="username" class="txt_input txt_input2" placeholder="用户名"
+                       value="">
+            </label>
+            <h2>密码</h2>
+            <label>
+                <input type="password" name="password" id="password" class="txt_input" placeholder="密码">
+            </label>
+            <div class="alert alert-warning" style="width:100%;display: none">
+                <strong>提示 ：</strong><span id='tip'>您的网络连接有问题</span>。
+                <a class="close" data-dismiss="alert" style="cursor: pointer;float:right;font-size: 18px">
+                    &times;
+                </a>
+            </div>
+            <div class="rem_sub">
+                <div class="rem_sub_l">
+                </div>
+                <label>
+                    <input type="button" onclick="login()" class="sub_button" name="button" id="button" value="SIGN-IN"
+                           style="opacity: 0.7;">
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<!--login_padding  Sign up end-->
+<br/>
+<br/>
+<p align="center">build by ling.shi</p>
+</body>
+
+<script src="Contents/lib/login-bg/js/constellation.js"></script>
+<script type="text/javascript">
+    $('.close').click(function () {
+        $('.alert').hide();	//隐藏
+    });
+
+    function login() {
+        var username = $('input[name=username]').val();
+        var password = $('input[name=password]').val();
+
+        if (username == '') {
+            $('#tip').html('请输入用户名');
+            $('.alert').show();
+            return;
+        }
+        if (password == '') {
+            $('#tip').html('请输入密码');
+            $('.alert').show();
+            return;
+        }
+
+        var postData = {
+            idCard: username,
+            password: hex_md5(password).toUpperCase()
+        };
+        layer.open({ type: 3 });
+        $.post(Config.UrlHead + '/users/loginer'
+            , postData
+            , function (data) {
+                layer.closeAll();
+                if(data.code==1 && data.data.rootpower==true){
+                    loginSuccess('Admin/index.html');
+                    return;
+                }
+                if (data.code == 1 && data.data.teachers != null) {
+                    loginSuccess('Teacher/index.html');
+                    return;
+                }
+                if (data.code == 1 && data.data.students != null) {
+                    loginSuccess('Student/index.html');
+                    return;
+                }
+                if (data.code != 1) {
+                    $('#tip').html(data.msg);
+                    $('.alert').show();
+                    return;
+                }
+
+
+            }, 'json');
+    }
+
+    function loginSuccess(url) {
+        layer.open({
+            type: 1
+            , area: ['200px','120px']
+            , time: 2000
+            , title: '提示'
+            , content: '<div style="text-align: center;font-size: 14px;line-height: 50px">登陆成功，正在跳转...</div>'
+            , end: function () {
+                window.location.href = url;
+            }
+        })
+    }
+</script>
+</html>

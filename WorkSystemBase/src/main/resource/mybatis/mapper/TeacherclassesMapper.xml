@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="worksystem.base.dao.TeacherclassesMapper">
+  <resultMap type="worksystem.base.model.dto.TeacherClassesDto" id="TeacherClassesDtoMap">
+  	<id property="teacherclassid" column="teacherclassid" />
+  	<association property="studentclass" javaType="worksystem.base.model.Studentclass"  autoMapping="true"></association>
+  </resultMap>
+  <select id="getTeacherclasses" resultMap="TeacherClassesDtoMap" parameterType="worksystem.base.model.Teacherclasses">
+  	SELECT teacherclasses.*
+	,studentclass.StudentClassName
+	FROM teacherclasses
+	LEFT JOIN studentclass ON teacherclasses.StudentClassID=studentclass.StudentClassID
+    where 1=1
+    <if test="studentclassid != null" >
+      and StudentClassID = #{studentclassid}
+    </if>
+    <if test="teacherid != null" >
+      and TeacherID = #{teacherid}
+    </if>
+  </select>
+  
+  <select id="getList" parameterType="worksystem.base.model.Teacherclasses" resultType="worksystem.base.model.Teacherclasses">
+    select * from teacherclasses
+    where 1=1
+    <if test="teacherclassid != null">
+      and TeacherClassID = #{teacherclassid}
+    </if>
+    <if test="studentclassid != null">
+      and StudentClassID = #{studentclassid}
+    </if>
+    <if test="teacherid != null">
+      and TeacherID = #{teacherid}
+    </if>
+  </select>
+  
+  <select id="getSingle" resultType="worksystem.base.model.Teacherclasses">
+    select * from teacherclasses
+    where TeacherClassID = #{id}
+    limit 0,1
+  </select>
+  
+  <insert id="insert" parameterType="worksystem.base.model.Teacherclasses">
+    insert into teacherclasses
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="teacherclassid != null">
+        TeacherClassID,
+      </if>
+      <if test="studentclassid != null">
+        StudentClassID,
+      </if>
+      <if test="teacherid != null">
+        TeacherID
+      </if>
+    </trim>
+    <trim prefix="values(" suffix=")" suffixOverrides=",">
+      <if test="teacherclassid != null">
+        #{teacherclassid},
+      </if>
+      <if test="studentclassid != null">
+        #{studentclassid},
+      </if>
+      <if test="teacherid != null">
+        #{teacherid}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="worksystem.base.model.Teacherclasses">
+    update teacherclasses
+    <set>
+      <if test="studentclassid != null">
+        StudentClassID = #{studentclassid},
+      </if>
+      <if test="teacherid != null">
+        TeacherID = #{teacherid}
+      </if>
+    </set>
+    where
+    TeacherClassID = #{teacherclassid}
+  </update>
+  
+  <delete id="batchDelete">
+    delete from teacherclasses
+    where TeacherClassID in(
+    <foreach collection="list" item="item" separator=",">
+      #{item}
+    </foreach>
+    )
+  </delete>
+  
+  <select id="getListWithPage" parameterType="worksystem.base.model.Teacherclasses" resultType="worksystem.base.model.Teacherclasses">
+    select * from teacherclasses
+    where 1=1
+    <if test="teacherclassid != null">
+      and TeacherClassID = #{teacherclassid}
+    </if>
+    <if test="studentclassid != null">
+      and StudentClassID = #{studentclassid}
+    </if>
+    <if test="teacherid != null">
+      and TeacherID = #{teacherid}
+    </if>
+  </select>
+  
+  <select id="count" parameterType="worksystem.base.model.Teacherclasses" resultType="java.lang.Long">
+    select count(*) from teacherclasses
+    where 1=1
+    <if test="teacherclassid != null">
+      and TeacherClassID = #{teacherclassid}
+    </if>
+    <if test="studentclassid != null">
+      and StudentClassID = #{studentclassid}
+    </if>
+    <if test="teacherid != null">
+      and TeacherID = #{teacherid}
+    </if>
+  </select>
+  
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="worksystem.base.dao.StudentclassMapper" >
+  <select id="getList" resultType="worksystem.base.model.Studentclass" parameterType="worksystem.base.model.Studentclass" >
+    select * from studentclass
+    where 1=1
+    <if test="studentclassid != null" >
+      and StudentClassID = #{studentclassid}
+    </if>
+    <if test="studentclassname != null" >
+      and StudentClassName = #{studentclassname}
+    </if>
+  </select>
+  
+  <select id="getSingle" resultType="worksystem.base.model.Studentclass" >
+    select * from studentclass
+    where StudentClassID = #{id}
+    limit 0,1
+  </select>
+  
+  <insert id="insert" parameterType="worksystem.base.model.Studentclass" >
+    insert into studentclass
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="studentclassid != null" >
+        StudentClassID,
+      </if>
+      <if test="studentclassname != null" >
+        StudentClassName
+      </if>
+    </trim>
+    <trim prefix="values(" suffix=")" suffixOverrides="," >
+      <if test="studentclassid != null" >
+        #{studentclassid},
+      </if>
+      <if test="studentclassname != null" >
+        #{studentclassname}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="worksystem.base.model.Studentclass" >
+    update studentclass
+    <set >
+      <if test="studentclassname != null" >
+        StudentClassName = #{studentclassname}
+      </if>
+    </set>
+    where
+    StudentClassID = #{studentclassid}
+  </update>
+  
+  <delete id="batchDelete" >
+    delete from studentclass
+    where StudentClassID in(
+    <foreach item="item" collection="list" separator="," >
+      #{item}
+    </foreach>
+    )
+  </delete>
+  
+  <select id="getListWithPage" resultType="worksystem.base.model.Studentclass" parameterType="worksystem.base.model.Studentclass" >
+    select * from studentclass
+    where 1=1
+    <if test="studentclassid != null" >
+      and StudentClassID = #{studentclassid}
+    </if>
+    <if test="studentclassname != null" >
+      and StudentClassName = #{studentclassname}
+    </if>
+  </select>
+  
+  <select id="count" resultType="java.lang.Long" parameterType="worksystem.base.model.Studentclass" >
+    select count(*) from studentclass
+    where 1=1
+    <if test="studentclassid != null" >
+      and StudentClassID = #{studentclassid}
+    </if>
+    <if test="studentclassname != null" >
+      and StudentClassName = #{studentclassname}
+    </if>
+  </select>
+  
+</mapper>

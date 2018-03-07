@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="worksystem.base.dao.TeachersMapper" >
+  <select id="getList" resultType="worksystem.base.model.Teachers" parameterType="worksystem.base.model.Teachers" >
+    select * from teachers
+    where 1=1
+    <if test="teacherid != null" >
+      and TeacherID = #{teacherid}
+    </if>
+    <if test="teacheridcard != null" >
+      and TeacherIDCard = #{teacheridcard}
+    </if>
+    <if test="teachername != null" >
+      and TeacherName = #{teachername}
+    </if>
+    <if test="teacherage != null" >
+      and TeacherAge = #{teacherage}
+    </if>
+    <if test="teacherpwd != null" >
+      and TeacherPwd = #{teacherpwd}
+    </if>
+    <if test="teachersex != null" >
+      and TeacherSex = #{teachersex}
+    </if>
+    <if test="remarks != null" >
+      and Remarks = #{remarks}
+    </if>
+  </select>
+  
+  <select id="getSingle" resultType="worksystem.base.model.Teachers" >
+    select * from teachers
+    where TeacherID = #{id}
+    limit 0,1
+  </select>
+  
+  <insert id="insert" parameterType="worksystem.base.model.Teachers" >
+    insert into teachers
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="teacherid != null" >
+        TeacherID,
+      </if>
+      <if test="teacheridcard != null" >
+        TeacherIDCard,
+      </if>
+      <if test="teachername != null" >
+        TeacherName,
+      </if>
+      <if test="teacherage != null" >
+        TeacherAge,
+      </if>
+      <if test="teacherpwd != null" >
+        TeacherPwd,
+      </if>
+      <if test="teachersex != null" >
+        TeacherSex,
+      </if>
+      <if test="remarks != null" >
+        Remarks
+      </if>
+    </trim>
+    <trim prefix="values(" suffix=")" suffixOverrides="," >
+      <if test="teacherid != null" >
+        #{teacherid},
+      </if>
+      <if test="teacheridcard != null" >
+        #{teacheridcard},
+      </if>
+      <if test="teachername != null" >
+        #{teachername},
+      </if>
+      <if test="teacherage != null" >
+        #{teacherage},
+      </if>
+      <if test="teacherpwd != null" >
+        #{teacherpwd},
+      </if>
+      <if test="teachersex != null" >
+        #{teachersex},
+      </if>
+      <if test="remarks != null" >
+        #{remarks}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="worksystem.base.model.Teachers" >
+    update teachers
+    <set >
+      <if test="teacheridcard != null" >
+        TeacherIDCard = #{teacheridcard},
+      </if>
+      <if test="teachername != null" >
+        TeacherName = #{teachername},
+      </if>
+      <if test="teacherage != null" >
+        TeacherAge = #{teacherage},
+      </if>
+      <if test="teacherpwd != null" >
+        TeacherPwd = #{teacherpwd},
+      </if>
+      <if test="teachersex != null" >
+        TeacherSex = #{teachersex},
+      </if>
+      <if test="remarks != null" >
+        Remarks = #{remarks}
+      </if>
+    </set>
+    where
+    TeacherID = #{teacherid}
+  </update>
+  
+  <delete id="batchDelete" >
+    delete from teachers
+    where TeacherID in(
+    <foreach item="item" collection="list" separator="," >
+      #{item}
+    </foreach>
+    )
+  </delete>
+  
+  <select id="getListWithPage" resultType="worksystem.base.model.Teachers" parameterType="worksystem.base.model.Teachers" >
+    select * from teachers
+    where 1=1
+    <if test="teacherid != null" >
+      and TeacherID = #{teacherid}
+    </if>
+    <if test="teacheridcard != null" >
+      and TeacherIDCard = #{teacheridcard}
+    </if>
+    <if test="teachername != null" >
+      and TeacherName = #{teachername}
+    </if>
+    <if test="teacherage != null" >
+      and TeacherAge = #{teacherage}
+    </if>
+    <if test="teacherpwd != null" >
+      and TeacherPwd = #{teacherpwd}
+    </if>
+    <if test="teachersex != null" >
+      and TeacherSex = #{teachersex}
+    </if>
+    <if test="remarks != null" >
+      and Remarks = #{remarks}
+    </if>
+  </select>
+  
+  <select id="count" resultType="java.lang.Long" parameterType="worksystem.base.model.Teachers" >
+    select count(*) from teachers
+    where 1=1
+    <if test="teacherid != null" >
+      and TeacherID = #{teacherid}
+    </if>
+    <if test="teacheridcard != null" >
+      and TeacherIDCard = #{teacheridcard}
+    </if>
+    <if test="teachername != null" >
+      and TeacherName = #{teachername}
+    </if>
+    <if test="teacherage != null" >
+      and TeacherAge = #{teacherage}
+    </if>
+    <if test="teacherpwd != null" >
+      and TeacherPwd = #{teacherpwd}
+    </if>
+    <if test="teachersex != null" >
+      and TeacherSex = #{teachersex}
+    </if>
+    <if test="remarks != null" >
+      and Remarks = #{remarks}
+    </if>
+  </select>
+  
+</mapper>

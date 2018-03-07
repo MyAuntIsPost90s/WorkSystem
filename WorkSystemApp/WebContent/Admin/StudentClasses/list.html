@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>班级设置</title>
+    <link rel="stylesheet" href="../../Contents/lib/layui/css/layui.css">
+    <link rel="stylesheet" href="../../Contents/lib/easyui-theme/themes/insdep/easyui.css">
+    <link rel="stylesheet" href="../../Contents/lib/easyui-theme/themes/insdep/icon.css">
+    <script src="../../Contents/js/config.js"></script>
+    <script src="../../Contents/js/jquery.min.js"></script>
+    <script src="../../Contents/lib/easyui-theme/jquery.easyui.min.js"></script>
+    <script src="../../Contents/lib/easyui-theme/locale/easyui-lang-zh_CN.js"></script>
+    <script src="../../Contents/js/easyui.util.js"></script>
+    <script src="../../Contents/lib/lingshiframework/lingshi_base.js"></script>
+    <script src="../../Contents/js/layui.util.js"></script>
+</head>
+<body>
+<div class="easyui-layout" data-options='fit:"true"'>
+    <table id="table-studentclass"></table>
+</div>
+<script id="lay-studentclassform" type="text/html">
+    <div style="padding: 10px;padding-right: 30px">
+        <form class="form-studentclass layui-form-pane" id="form-studentclass">
+            <input id="opt-type" type="hidden" name="type" />
+            <input type="hidden" name="studentclassid" />
+            <div class="layui-form-item">
+                <label class="layui-form-label">班级名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="studentclassname" required  lay-verify="studentclassname" placeholder="请输入班级名" data-valid="name:'班级名',length:[1,20]" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" style="text-align: right">
+                <button type="button" class="layui-btn" onclick="save()">保存</button>
+            </div>
+        </form>
+    </div>
+</script>
+<script src="../../Contents/lib/layui/layui.all.js"></script>
+<script>
+    $(function () {
+        initDataGrid();
+    })
+    //保存
+    function save() {
+        var postData=FormUtil.getFormMap("#form-studentclass");
+        if(postData==null||postData==''){
+            return;
+        }
+        var url=Config.UrlHead+'/studentClasses/add';
+        if(postData.type=='edit'){
+            url=Config.UrlHead+'/studentClasses/update';
+        }
+        $.post(url
+            ,postData
+            ,function (data) {
+                if(data.code==1){
+                    layer.closeAll();
+                }
+                layer.msg(data.msg);
+                $('#table-studentclass').datagrid('reload');
+            },'json')
+    }
+    //批量删除
+    function batchDelete() {
+        var rows = $('#table-studentclass').datagrid('getChecked');
+        if (rows.length < 1) {
+            return;
+        }
+        var ids = [];
+        for (var i = 0; i < rows.length; i++) {
+            ids.push(rows[i].studentclassid);
+        }
+        layer.confirm("是否确定删除", function (index) {
+            $.ajax({
+                url: Config.UrlHead + '/studentClasses/batchDelete',
+                contentType: "application/json ; charset=utf-8",
+                data: JSON.stringify(ids),
+                method: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    layer.close(index);
+                    layer.msg(data.msg);
+                    $('#table-studentclass').datagrid('reload');
+                }
+            });
+        }, function (index) {
+            layer.close(index);
+        });
+    }
+
+    //点击删除事件
+    function del(id) {
+        var ids = [];
+        ids.push(id);
+        layer.confirm("是否确定删除", function (index) {
+            $.ajax({
+                url: Config.UrlHead + '/studentClasses/batchDelete',
+                contentType: "application/json ; charset=utf-8",
+                data: JSON.stringify(ids),
+                method: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    layer.close(index);
+                    layer.msg(data.msg);
+                    $('#table-studentclass').datagrid('reload');
+                }
+            });
+        }, function (index) {
+            layer.close(index);
+        });
+    }
+    //展示添加
+    function showAddStudentClass() {
+        layer.open({
+            type:1
+            ,title:'添加班级'
+            ,content:$('#lay-studentclassform').html()
+            ,success:function(){
+                $('#opt-type').val('add');
+                FormUtil.loadForm('#form-studentclass',{sex:0});
+                layui.form.render();
+            }
+        })
+    }
+    //展示编辑框
+    function showEdit(id){
+        var index = layer.open({type:3});
+        $.post(Config.UrlHead+'/studentClasses/single'
+            ,{studentClassId:id}
+            ,function (data) {
+                layer.close(index);
+                layer.open({
+                    type:1
+                    ,title:'编辑班级信息'
+                    ,content:$('#lay-studentclassform').html()
+                    ,success:function(){
+                        $('#opt-type').val('edit');
+                        if(data.code==1){
+                            FormUtil.loadForm('#form-studentclass',data.data);
+                        }else {
+                            layer.msg(data.msg);
+                        }
+                        layui.form.render();
+                    }
+                })
+            },'json');
+    }
+    //初始化表格数据
+    function initDataGrid() {
+        EasyUIUtil.initDataGrid('#table-studentclass', Config.UrlHead + "/studentClasses/list",getColumns());
+        var pager=$('#table-studentclass').datagrid('getPager');
+        pager.pagination({
+            showPageList: true,
+            buttons: [{
+                iconCls: 'icon-add',
+                handler: function () {
+                    showAddStudentClass();
+                }
+            }, {
+                iconCls: 'icon-remove',
+                handler: function () {
+                    batchDelete();
+                }
+            }],
+            onBeforeRefresh: function () {
+                return true;
+            }
+        });
+    }
+    //获取列
+    function getColumns(){
+        var columns=[[
+            {field:'ck',checkbox:true},
+            {
+                field:'studentclassid',
+                width:50,
+                align:'center',
+                title:"操作",
+                formatter:function(val,row){
+                    return '<button class="layui-btn layui-btn-xs layui-btn-danger" onclick="del(\'' + val + '\')"><i class="layui-icon">&#xe640;</i>移除</button>'
+                        +'<button class="layui-btn layui-btn-xs" onclick="showEdit(\'' + val + '\')"><i class="layui-icon">&#xe642;</i>编辑</button>'
+                }
+            },
+            {field:'studentclassname',width:100,align:'center',title:"班级名称"}
+        ]];
+        return columns;
+    }
+</script>
+</body>
+</html>
